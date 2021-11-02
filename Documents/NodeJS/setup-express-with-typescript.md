@@ -339,3 +339,67 @@ Then run `npm run stylelint-check`.
 ```bash
 npm run stylelint-check
 ```
+
+### 4.3. Git hooks
+
+In addition to running Prettier from the command line (`prettier --write`), checking formatting in CI, and running Prettier from your editor, many people like to run Prettier as a pre-commit hook as well. This makes sure all your commits are formatted, without having to wait for your CI build to finish.
+
+For example, you can do the following to have Prettier run before each commit:
+
+1. Install husky and lint-staged:
+
+```bash
+npm install --save-dev husky lint-staged
+npx husky install
+npm set-script prepare "husky install"
+npx husky add .husky/pre-commit "npx lint-staged"
+```
+
+or
+
+```bash
+yarn add --dev husky lint-staged
+npx husky install
+npm set-script prepare "husky install"
+npx husky add .husky/pre-commit "npx lint-staged"
+```
+
+>
+> If you use Yarn 2, see https://typicode.github.io/husky/#/?id=yarn-2
+>
+
+>
+>Note: npm set-script command requires at least npm v7.x. See https://docs.npmjs.com/cli/v7/commands/npm-set-script.
+>
+2. Add the following to your package.json:
+
+```json
+{
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
+}
+```
+
+>
+> Note: If you use ESLint, make sure lint-staged runs it before Prettier, not after.
+>
+
+### 4.4 Install commitlint
+
+```bash
+npm install --save-dev @commitlint/{cli,config-conventional}
+echo "module.exports = { extends: ['@commitlint/config-conventional'] };" > commitlint.config.js
+```
+
+Alternatively the configuration can be defined in a `commitlint.config.js`, `.commitlintrc.js`, `.commitlintrc`, `.commitlintrc.json`, `.commitlintrc.yml` file or a `commitlint` field in `package.json`.
+
+>
+> ***❕ Add more hook to husky***
+>`yarn husky add .husky/commit-msg 'yarn commitlint --edit $1'`
+> or
+>`npx husky add .husky/commit-msg 'npx --no -- commitlint --edit $1'`
+>
+> ***Test***
+> `npx commitlint --from HEAD~1 --to HEAD --verbose`
+>
